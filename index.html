@@ -15,7 +15,30 @@
         <link rel="stylesheet" href="css/main.css">
         <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css?family=Bowlby+One" rel="stylesheet">
+        <script src="aws-sdk/dist/aws-sdk.min.js"></script>
+        <script type="text/javascript">
+            var LPAWS = {};
 
+            // Initialize the Amazon Cognito credentials provider
+            AWS.config.region = 'eu-west-1'; // Region
+            AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+                IdentityPoolId: 'eu-west-1:e4c24108-5050-42f8-ac0b-761c46aa947f',
+            });
+
+            LPAWS.sendToTopic = function() {
+                var sns = new AWS.SNS();
+                var params = {
+                    //Message: 'Hello topic', /* required */
+                    Message: document.querySelector('#input-msg').value,
+                    Subject: 'Browser SNS publish - contact form',
+                    TopicArn: 'arn:aws:sns:eu-west-1:717437904155:com-website-contact-form'
+                };
+                sns.publish(params, function(err, data) {
+                    if (err) console.log(err, err.stack); // an error occurred
+                    else     console.log(data);           // successful response
+                });
+            };
+        </script>
     </head>
     <body>
         <!--[if lte IE 9]>
@@ -27,16 +50,13 @@
         <nav id="navbar">
             <ul class="navbar-nav">
                 <li class="navbar-nav-item">
-                    <a href="">Home</a>
+                    <a href="#about-content">About</a>
                 </li>
                 <li class="navbar-nav-item">
-                    <a href="about">About</a>
+                    <a href="#work-content">Work</a>
                 </li>
                 <li class="navbar-nav-item">
-                    <a href="projects">Projects</a>
-                </li>
-                <li class="navbar-nav-item">
-                    <a href="https://github.com/aapowers/awt-theme">GitHub</a>
+                    <a href="#contact-content">Contact</a>
                 </li>
             </ul>
         </nav>
@@ -46,14 +66,14 @@
                 Menu
             </button>
             <div id="navbar-menu-dropdown" class="dropdown-content">
-                <a class="navbar-menu-dropdown-item" href="http://alissapowers.com">Home</a>
-                <a class="navbar-menu-dropdown-item" href="http://alissapowers.com/about">About</a>
-                <a class="navbar-menu-dropdown-item" href="http://github.com">GitHub</a>
-                <a class="navbar-menu-dropdown-item" href="http://scoreshare.eee.uci.edu">Projects</a>
+                <a class="navbar-menu-dropdown-item" href="#content">About</a>
+                <a class="navbar-menu-dropdown-item" href="#content1">Work</a>
+                <a class="navbar-menu-dropdown-item" href="#content2">Contact</a>
             </div>
         </div>
 
-        <div id="content">
+        <div id="about-content">
+            <div class="breakpoint"></div>
             <h1 class="my-name">Alissa Powers</h1>
             <div class="my-description">
                 <div class="my-description-text">Hello! I'm a web application developer in Irvine, CA.</div>
@@ -65,7 +85,23 @@
             </div>
         </div>
 
-        <div id="footer"></div>
+        <div id="work-content">
+            <div class="breakpoint"></div>
+        </div>
+
+        <div id="contact-content">
+            <div class="breakpoint"></div>
+            <form>
+                <input type="text" name="msg" id="input-msg"/>
+                <button onclick="LPAWS.sendToTopic(); return false;">Send to SNS topic</button>
+            </form>
+        </div>
+
+        <div id="footer">
+            <a href="https://www.gitshowcase.com/aapowers">
+                <img border="0" alt="GitHub Icon" src="img/github-icon.png" height="40px" width="40px">
+            </a>
+        </div>
 
 
         <script src="js/vendor/modernizr-3.5.0.min.js"></script>
